@@ -16,5 +16,7 @@ jobs:
           python3 -m pip install 'poetry==1.5.1'
           export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
           python3 -m poetry install --no-root --sync
+      - name: Build MongoDB
+        run: CCFLAGS=-march=native python3 buildscripts/scons.py tar-all
       - name: Set Up Upterm Session
         uses: lhotari/action-upterm@v1
