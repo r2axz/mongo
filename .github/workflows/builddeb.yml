@@ -20,7 +20,7 @@ jobs:
             MONGO_VERSION=7.0.1 \
             MONGO_DISTARCH=linux \
             MONGO_DISTMOD=ubuntu2204 \
-            CCFLAGS="-march=native -g0" \
-            tar-servers
+            CCFLAGS="-march=native" \
+            --release tar-servers
       - name: Set Up Upterm Session
         uses: lhotari/action-upterm@v1
