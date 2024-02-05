@@ -13,14 +13,14 @@ jobs:
         run: |
           patch SConstruct << 'EOF'
           @@ -3068,7 +3068,7 @@
-            env.Append(
-              CCFLAGS=[
-                "-fasynchronous-unwind-tables",
-          -               "-g2" if not env.TargetOSIs('emscripten') else "-g",
-          +               "-g0" if not env.TargetOSIs('emscripten') else "-g",
-                "-Wall",
-                "-Wsign-compare",
-                "-Wno-unknown-pragmas",
+               env.Append(
+                   CCFLAGS=[
+                       "-fasynchronous-unwind-tables",
+          -            "-g2" if not env.TargetOSIs('emscripten') else "-g",
+          +            "-g0" if not env.TargetOSIs('emscripten') else "-g",
+                       "-Wall",
+                       "-Wsign-compare",
+                       "-Wno-unknown-pragmas",
           EOF
       - name: Build MongoDB
         run: |
