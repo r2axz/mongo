@@ -1,15 +1,23 @@
-name: Build Debian Package
-run-name: ${{ github.actor }} is building MongoDB debian package
-on: [push]
+name: Build Mongo Dist
+run-name: ${{ github.actor }} is building MongoDB dist tarball
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit hash to build'
+        required: true
+        type: string
 jobs:
   build-dpkg:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
       - name: Install Build Tools
         run: sudo apt install -y build-essential lld gdb libcurl4-openssl-dev liblzma-dev python-dev-is-python3 libssl-dev
-      - name: Patch Sources
+      - name: Patch Sources (disable debug info)
         run: |
           patch SConstruct << 'EOF'
           @@ -3068,7 +3068,7 @@
@@ -22,7 +30,7 @@ jobs:
                        "-Wsign-compare",
                        "-Wno-unknown-pragmas",
           EOF
-      - name: Build MongoDB
+      - name: Build MongoDB Servers
         run: |
           python3 -m venv .venv --prompt mongo
           source .venv/bin/activate
@@ -34,6 +42,10 @@ jobs:
             MONGO_DISTARCH=linux \
             MONGO_DISTMOD=ubuntu2204 \
             CCFLAGS="-march=native" \
-            -j4 --legacy-tarball=true archive-mongod
-      - name: Set Up Upterm Session
-        uses: lhotari/action-upterm@v1
+            -j4 --legacy-tarball=true tar-dist
+      - name: Collect Artefacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: dist-tarball
+            path: build/opt/pkgs/*
+
