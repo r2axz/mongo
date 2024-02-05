@@ -8,7 +8,7 @@ on:
         required: true
         type: string
 jobs:
-  build-dpkg:
+  build-dist:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
