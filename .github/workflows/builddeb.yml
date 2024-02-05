@@ -16,6 +16,10 @@ jobs:
           python3 -m pip install 'poetry==1.5.1'
           export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
           python3 -m poetry install --no-root --sync
-          CCFLAGS=-march=native python3 buildscripts/scons.py MONGO_VERSION=7.0.1 MONGO_DISTARCH=linux MONGO_DISTMOD=ubuntu2204 tar-servers
+          export MONGO_VERSION=7.0.1
+          export MONGO_DISTARCH=linux
+          export MONGO_DISTMOD=ubuntu2204
+          export CCFLAGS="-march=native -g0"
+          python3 buildscripts/scons.py tar-servers
       - name: Set Up Upterm Session
         uses: lhotari/action-upterm@v1
