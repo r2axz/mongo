@@ -34,6 +34,6 @@ jobs:
             MONGO_DISTARCH=linux \
             MONGO_DISTMOD=ubuntu2204 \
             CCFLAGS="-march=native" \
-            -j4 --legacy-tarball=true tar-mongod
+            -j4 --legacy-tarball=true archive-mongod
       - name: Set Up Upterm Session
         uses: lhotari/action-upterm@v1
