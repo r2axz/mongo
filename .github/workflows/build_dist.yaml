@@ -42,7 +42,7 @@ jobs:
             MONGO_DISTARCH=linux \
             MONGO_DISTMOD=ubuntu2204 \
             CCFLAGS="-march=native" \
-            -j4 tar-dist
+            -j4 --legacy-tarball=true tar-dist
       - name: Collect Artifacts
         uses: actions/upload-artifact@v4
         with:
