@@ -1,4 +1,4 @@
-name: Build MongoDB Debian Packages
+name: Build MongoDB Debian Packages (Ubuntu 22.04)
 run-name: ${{ github.actor }} is building MongoDB
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         required: true
         type: string
 jobs:
-  build-dist:
+  build-dpkgs-ubuntu2204:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -66,18 +66,4 @@ jobs:
         with:
             name: ubuntu2204-noavx
             path: build_ubuntu2204/repo/*
-      - name: Create Debian Packages (Debian 12)
-        run: |
-          mkdir ./build_debian12
-          (cd ./buildscripts && python3 ./packager.py \
-            -d debian12 \
-            -s `git describe --tags | sed 's/^[^0-9]*//'` \
-            -r 1 \
-            -a `arch` \
-            -t ../build/opt/pkgs/mongodb-dist.tgz \
-            -p ../build_debian12)
-      - name: Collect Debian 12 Packages
-        uses: actions/upload-artifact@v4
-        with:
-            name: debian12-noavx
-            path: build_debian12/repo/*
+
