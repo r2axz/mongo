@@ -66,7 +66,7 @@ jobs:
         with:
             name: ubuntu2204-noavx
             path: build_ubuntu2204/repo/*
-      - name: Create Debian Packages (Debina 12)
+      - name: Create Debian Packages (Debian 12)
         run: |
           mkdir ./build_debian12
           (cd ./buildscripts && python3 ./packager.py \
