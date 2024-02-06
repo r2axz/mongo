@@ -1,5 +1,5 @@
 name: Build MongoDB Debian Packages
-run-name: ${{ github.actor }} is building MongoDB dpkgs
+run-name: ${{ github.actor }} is building MongoDB
 on:
   workflow_dispatch:
     inputs:
@@ -16,7 +16,11 @@ jobs:
         with:
           ref: ${{ inputs.refToBuild }}
       - name: Install Build Tools
-        run: sudo apt install -y build-essential lld gdb libcurl4-openssl-dev liblzma-dev python-dev-is-python3 libssl-dev
+        run: |
+          sudo apt install -y \
+            build-essential lld gdb libcurl4-openssl-dev \
+            liblzma-dev python-dev-is-python3 libssl-dev \
+            dpkg-dev rpm debhelper fakeroot
       - name: Patch Sources (disable debug info generation)
         run: |
           patch SConstruct << 'EOF'
@@ -44,20 +48,36 @@ jobs:
             -j4 --legacy-tarball=true tar-dist
       - name: Collect Binaries
         uses: actions/upload-artifact@v4
-          name: binaries
+        with:
+          name: tar-noavx
           path: build/opt/pkgs/*
-      - name: Create Debian Packages
+      - name: Create Debian Packages (Ubuntu 2204)
         run: |
-          sudo apt install dpkg-dev rpm debhelper fakeroot
-          mkdir ./build_deb
+          mkdir ./build_ubuntu2204
           (cd ./buildscripts && python3 ./packager.py \
+            -d ubuntu2204 \
             -s `git describe --tags | sed 's/^[^0-9]*//'` \
             -r 1 \
             -a `arch` \
             -t ../build/opt/pkgs/mongodb-dist.tgz \
-            -p ../build_deb)
-      - name: Collect Artifacts
+            -p ../build_ubuntu2204)
+      - name: Collect Ubuntu 22.04 Packages
         uses: actions/upload-artifact@v4
         with:
-            name: dist-tarball
-            path: build/opt/pkgs/*
+            name: ubuntu2204-noavx
+            path: build_ubuntu2204/repo/*
+      - name: Create Debian Packages (Debina 12)
+        run: |
+          mkdir ./build_debian12
+          (cd ./buildscripts && python3 ./packager.py \
+            -d debian12 \
+            -s `git describe --tags | sed 's/^[^0-9]*//'` \
+            -r 1 \
+            -a `arch` \
+            -t ../build/opt/pkgs/mongodb-dist.tgz \
+            -p ../build_debian12)
+      - name: Collect Debian 12 Packages
+        uses: actions/upload-artifact@v4
+        with:
+            name: debian12-noavx
+            path: build_debian12/repo/*
